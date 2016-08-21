@@ -1,6 +1,6 @@
 import { WebView  } from 'ui/web-view';
 
-export class TnsOAuthWebViewHelper extends NSObject implements UIWebViewDelegate { 
+export class TnsOAuthWebViewHelper extends NSObject implements UIWebViewDelegate {
     public static ObjCProtocols = [UIWebViewDelegate];
 
     private _owner: WeakRef<WebView>;
@@ -32,7 +32,8 @@ export class TnsOAuthWebViewHelper extends NSObject implements UIWebViewDelegate
     }
 
     public webViewDidFinishLoad(webView: UIWebView) {
-        this._checkCodeIntercept(webView, null);
+        let title = webView.stringByEvaluatingJavaScriptFromString('document.title')
+        this._checkCodeIntercept(webView, null, title);
         this._origDelegate.webViewDidFinishLoad(webView);
     }
 

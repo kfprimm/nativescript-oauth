@@ -81,8 +81,8 @@ export function getTokenFromCache() {
 export function loginViaAuthorizationCodeFlow(credentials: TnsOAuth.ITnsOAuthCredentials, successPage?: string) : Promise<TnsOAuth.ITnsOAuthTokenResult> {
     return new Promise((resolve, reject) => {
         var navCount = 0;
-      
-        let checkCodeIntercept = (webView, error, url) => {
+        let checkCodeIntercept = (webView, error, title) => {
+            console.log(webView.request.URL.absoluteString)
             var retStr = '';
 
             if (error && error.userInfo && error.userInfo.allValues && error.userInfo.allValues.count > 0) {
@@ -91,17 +91,26 @@ export function loginViaAuthorizationCodeFlow(credentials: TnsOAuth.ITnsOAuthCre
                     retStr = error.userInfo.allValues[0].absoluteString;
                 } else {
                     retStr = val0;
-                } 
+                }
             } else if (webView.request && webView.request.URL && webView.request.URL.absoluteString) {
                 retStr = webView.request.URL.absoluteString;
-            } else if (url) {
-                retStr = url;
             }
 
             if (retStr != '') {
-                let parsedRetStr = URL.parse(retStr);
-                if (parsedRetStr.query) {
-                    let qsObj = querystring.parse(parsedRetStr.query);
+                let qsObj;
+                if (credentials.redirectUri == 'urn:ietf:wg:oauth:2.0:oob:auto') {
+                    let match = title.match(/^Success (.*)/);
+                    if (match) {
+                      qsObj = querystring.parse(match[1]);
+                    }
+                } else {
+                    let parsedRetStr = URL.parse(retStr)
+                    if (parsedRetStr.query) {
+                      qsObj = querystring.parse(parsedRetStr.query);
+                    }
+                }
+
+                if (qsObj) {
                     let codeStr = qsObj['code'] ? qsObj['code'] : qsObj['xsrfsign'];
                     if (codeStr) {
                         try {
@@ -143,7 +152,7 @@ export function refreshToken(credentials: TnsOAuth.ITnsOAuthCredentials) : Promi
     return new Promise((resolve, reject) => {
         try {
             let oldTokenResult = TnsOAuthTokenCache.getToken();
-                
+
             getTokenFromRefreshToken(credentials, oldTokenResult.refreshToken)
                 .then((response: TnsOAuth.ITnsOAuthTokenResult)=>{
                     TnsOAuthTokenCache.setToken(response);
@@ -195,8 +204,8 @@ class TnsOAuth {
                 clientSecret: string,
                 baseSite: string,
                 baseSiteToken: string,
-                authorizePath: string, 
-                accessTokenPath: string, 
+                authorizePath: string,
+                accessTokenPath: string,
                 customHeaders?: any) {
         this._clientId = clientId;
         this._clientSecret = clientSecret;
@@ -293,7 +302,7 @@ class TnsOAuth {
                 expDate.setSeconds(expDate.getSeconds() + expSecs);
 
                 let tokenResult: TnsOAuth.ITnsOAuthTokenResult = {
-                    accessToken: access_token, 
+                    accessToken: access_token,
                     refreshToken: refresh_token,
                     accessTokenExpiration: expDate,
                     refreshTokenExpiration: expDate

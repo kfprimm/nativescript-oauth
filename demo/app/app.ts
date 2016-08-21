@@ -12,7 +12,13 @@ var facebookInitOptions : TnsOAuth.ITnsOAuthOptionsFacebook = {
     scope: ['email']
 };
 
-tnsOAuthModule.initOffice365(o365InitOptions);
-//tnsOAuthModule.initFacebook(facebookInitOptions);
+var googleInitOptions : TnsOAuth.ITnsOAuthOptionsGoogle = {
+    clientId: '652709020800-odbalb3vboilqd6fj534s88b26bjcb21.apps.googleusercontent.com',
+    scope: ['email']
+};
+
+// tnsOAuthModule.initOffice365(o365InitOptions);
+// //tnsOAuthModule.initFacebook(facebookInitOptions);
+tnsOAuthModule.initGoogle(googleInitOptions);
 
 application.start({ moduleName: 'main-page' });

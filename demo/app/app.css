@@ -1,15 +1,12 @@
 ﻿.login-title {
     margin-top: 30;
+    margin-bottom: 30;
     color: #666666;
     font-size: 14;
     horizontal-align: center;
 }
 
-.btn-login-ms {
-    background-image: url('res://microsoft_logo_squares');
-    background-size: 20 20;
-    background-position: 10 10;
-    background-repeat: no-repeat;
+.btn-login {
     padding-left: 40;
     padding-right: 10;
     padding-top: 10;
@@ -18,5 +15,12 @@
     border-color: red;
     border-radius: 2;
     horizontal-align: center;
-    margin-top:40;
+    margin-top: 10;
+}
+
+.btn-login-ms {
+    background-image: url('res://microsoft_logo_squares');
+    background-size: 20 20;
+    background-position: 10 10;
+    background-repeat: no-repeat;
 }
